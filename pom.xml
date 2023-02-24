@@ -6,10 +6,10 @@
 
     <groupId>org.example</groupId>
     <artifactId>pluginworkshop20230223</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>pluginworkshop20230216</name>
+    <name>pluginworkshop20230223</name>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
