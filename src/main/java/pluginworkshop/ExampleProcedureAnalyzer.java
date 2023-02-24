@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
@@ -138,4 +139,30 @@ public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
         );
     }
 
+    /**
+     * Returns a string containing a message.
+     *
+     * Example of usage within form script:
+     *
+     * ```
+     * var f = function(response) { console.log(response); };
+     * executePluginMethod('ExampleProcedureAnalyzer', 'hallo', { id: getPatient().id }, f, false );
+     * ```
+     *
+     * @param input Map with input values
+     *
+     * @return A message depending of given ID
+     */
+
+    public String hallo(Map<String, Object> input) {
+        var id = input.get("id");
+
+        if (id == null) {
+            return "Hallo, unbekannter Patient!";
+        }
+
+        var patient = onkostarApi.getPatient(Integer.parseInt(id.toString()));
+
+        return "Hallo, " + patient.getGivenName() + "!";
+    }
 }
