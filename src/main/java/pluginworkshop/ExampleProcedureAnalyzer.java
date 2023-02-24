@@ -2,6 +2,7 @@ package pluginworkshop;
 
 import de.itc.onkostar.api.Disease;
 import de.itc.onkostar.api.IOnkostarApi;
+import de.itc.onkostar.api.Item;
 import de.itc.onkostar.api.Procedure;
 import de.itc.onkostar.api.analysis.AnalyseTriggerEvent;
 import de.itc.onkostar.api.analysis.AnalyzerRequirement;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.Set;
 
 public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
@@ -31,7 +33,7 @@ public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
 
     @Override
     public String getVersion() {
-        return "0.0.1";
+        return "0.1.0";
     }
 
     @Override
@@ -67,7 +69,7 @@ public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
      */
     @Override
     public boolean isRelevantForAnalyzer(Procedure procedure, Disease disease) {
-        return null != procedure;
+        return null != procedure && null != disease && procedure.getFormName().equals("OS.Diagnose.VarianteUKW");
     }
 
     /**
@@ -93,13 +95,23 @@ public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
 
         var patient = procedure.getPatient();
 
-        patient.getDiseases().forEach(patientDisease -> {
-            var icd10code = patientDisease.getIcd10Code();
-            // Example log! Do not use in production - personal information!
-            logger.info("Found Disease {} for Patient {}", icd10code, patient.getId());
+        var newProcedure = new Procedure(onkostarApi);
 
-            // Do something with this data ...
-        });
+        newProcedure.setFormName("Test");
+        newProcedure.setPatientId(patient.getId());
+        newProcedure.addDisease(disease);
+        newProcedure.setStartDate(new Date());
+
+        newProcedure.setValue("datum", new Item("datum", new Date()));
+
+        try {
+            onkostarApi.saveProcedure(newProcedure, false);
+        } catch (Exception e) {
+            logger.error("Fehler beim Speichern!", e);
+            return;
+        }
+
+        logger.info("Gespeichert!");
     }
 
     @Override
@@ -109,7 +121,7 @@ public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
 
     @Override
     public AnalyzerRequirement getRequirement() {
-        return AnalyzerRequirement.ENTRY;
+        return AnalyzerRequirement.PROCEDURE;
     }
 
     /**
@@ -125,4 +137,5 @@ public class ExampleProcedureAnalyzer implements IProcedureAnalyzer {
                 AnalyseTriggerEvent.EDIT_SAVE
         );
     }
+
 }
