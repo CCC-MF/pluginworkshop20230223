@@ -8,5 +8,6 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/beans/spring-context-4.3.xsd">
 
     <bean id="exampleProcedureAnalyzer" class="pluginworkshop.ExampleProcedureAnalyzer" />
+    <bean id="demoProcedureAnalyzer" class="pluginworkshop.DemoProcedureAnalyzer" />
 
 </beans>
